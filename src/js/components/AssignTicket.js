@@ -2,6 +2,6 @@ import React, { Component } from 'react';
 
 export default class AssignTicket extends Component {
     render() {
-        return (<div />);
+        return (<div>Assign Ticket</div>);
     }
 }

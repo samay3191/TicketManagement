@@ -5,9 +5,12 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from "react-redux";
 import store from "./js/store/index";
+import { Router, Route, hashHistory } from 'react-router'
 
 ReactDOM.render(<Provider store={store}>
-    <App />
+    <Router history={hashHistory}>
+      <Route path="/" component={App}/>
+    </Router>
   </Provider>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
