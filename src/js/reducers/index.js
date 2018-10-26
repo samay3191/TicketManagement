@@ -1,19 +1,9 @@
-import { FILTER_COUNTRIES } from "../constants/actionTypes";
+import { combineReducers } from "redux";
+import ticketReducer from './ticketReducer';
 
-const initialState = {
-    countries: []
-};
 
-const rootReducer = (state = initialState, action) => {
-    switch(action.type) {
-        case FILTER_COUNTRIES:
-        {
-            const countries = action.payload || [];
-            return { countries };
-        }
-        default:
-            return state;
-    }
-};
+const rootReducer = combineReducers({
+    ticketReducer
+});
 
 export default rootReducer;
