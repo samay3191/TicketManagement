@@ -1,4 +1,4 @@
-import { ADD_TICKET, GET_TICKET, GET_ALL_TICKETS } from "../constants/actionTypes";
+import { ADD_TICKET, GET_TICKET, GET_ALL_TICKETS, UPDATE_TICKET } from "../constants/actionTypes";
 import * as _ from 'lodash';
 
 const initialState = {
@@ -12,6 +12,20 @@ const ticketReducer = (state = initialState, action) => {
         {
             const tickets = state.tickets;
             tickets.push(action.payload);
+            return {
+                ...state,
+                tickets
+            };
+        }
+        case UPDATE_TICKET:
+        {
+            const updatedTicket = action.payload;
+            const tickets = state.tickets.map(ticket => {
+                if (ticket.ticketId === updatedTicket.ticketId) {
+                    return updatedTicket;
+                }
+                return ticket;
+            });
             return {
                 ...state,
                 tickets

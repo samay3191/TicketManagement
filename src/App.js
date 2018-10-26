@@ -3,16 +3,23 @@ import './App.css';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import PropTypes from 'prop-types';
-import { hashHistory } from 'react-router'
+import { hashHistory } from 'react-router';
+import * as actions from './js/actions/ticketActions';
 
 const mapStateToProps = state => {
-  return { countries: state.countries };
+  return {
+    tickets: state.ticketReducer.tickets,
+    selectedTicket: state.ticketReducer.selectedTicket
+  };
 };
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(actions, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
 class App extends Component {
+
+  constructor() {
+    super();
+  }
 
   goToPage = (path) => {
     hashHistory.push(path);
@@ -40,7 +47,8 @@ class App extends Component {
 }
 
 App.propTypes = {
-  tickets: PropTypes.array
+  tickets: PropTypes.array,
+  selectedTicket: PropTypes.node
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

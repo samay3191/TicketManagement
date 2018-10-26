@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from "react-redux";
+import { hashHistory } from 'react-router';
+import { bindActionCreators } from "redux";
 import * as uuid from 'uuid';
 import { getTodaysDate } from '../Utils/CommonMethods';
 import * as actions from '../actions/ticketActions';
 
 const mapStateToProps = state => {
     return {
-        tickets: state.tickets,
-        selectedTicket: state.selectedTicket
+      tickets: state.ticketReducer.tickets,
+      selectedTicket: state.ticketReducer.selectedTicket
     };
 };
   
@@ -21,23 +24,25 @@ class AddTicket extends Component {
             empName: "",
             empEmail: "",
             empPhone: "",
-            issueType: "",
+            issueType: "Software Installation",
             issueDescription: "",
             issueDate: "",
             empNameError: "",
             empEmailError: "",
             empPhoneError: ""
         }
-    }
+    };
 
     onTextChange = event => {
-        this.setState({ [event.target.name] : [event.target.value] });
-    }
+        this.setState({ [event.target.name] : event.target.value });
+    };
 
-    submitTicket = () => {
+    submitTicket = async (event) => {
+        event.preventDefault();
         const ticket = this.createTicketObject();
-        this.props.addTicket(ticket);
-    }
+        await this.props.addTicket(ticket);
+        hashHistory.push("/TicketList");
+    };
 
     createTicketObject = () => {
         const ticketId = uuid.v4();
@@ -56,10 +61,15 @@ class AddTicket extends Component {
             empPhone,
             issueType,
             issueDescription,
-            issueDate
+            issueDate,
+            assignedTo: "",
+            assignedOn: "",
+            isCompleted: false,
+            isDeleted: false
         };
+        debugger;
         return ticketObject;
-    }
+    };
 
     render() {
         return (
@@ -145,7 +155,7 @@ class AddTicket extends Component {
     }
 }
 
-AddTicket.prototype = {
+AddTicket.propTypes = {
     tickets: PropTypes.array,
     selectedTicket: PropTypes.node
 }
