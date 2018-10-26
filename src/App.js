@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import CountryList from './js/components/CountryListPage';
+import { Link } from 'react-router';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import * as actions from './js/actions/filterActions';
@@ -18,12 +18,6 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-    };
-  }
-
-  componentWillReceiveProps (newProps) {
-    // this.setState({ filteredCounties: newProps.countries });
   }
 
   render() {
@@ -38,6 +32,7 @@ class App extends Component {
             <Link to="/TicketList">Ticket List</Link>
             <Link to="/AssignTicket">Assign Ticket</Link>
           </div>
+          {this.props.children}
         </header>
       </div>
     );

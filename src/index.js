@@ -5,17 +5,18 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from "react-redux";
 import store from "./js/store/index";
-import { Router, Route, IndexRoute, hashHistory } from 'react-router'
+import { Router, Route, hashHistory } from 'react-router'
 import AddTicket from './js/components/AddTicket';
 import AssignTicket from './js/components/AssignTicket';
 import TicketList from './js/components/TicketList';
 
 ReactDOM.render(<Provider store={store}>
     <Router history={hashHistory}>
-      <IndexRoute path="/" component={App}/>
-      <Route path="/AddTicket" component={AddTicket}/>
-      <Route path="/AssignTicket" component={AssignTicket}/>
-      <Route path="/TicketList" component={TicketList}/>
+      <Route path="/" component={App}>
+        <Route path="AddTicket" component={AddTicket}/>
+        <Route path="TicketList" component={TicketList}/>
+        <Route path="AssignTicket" component={AssignTicket}/>
+      </Route>
     </Router>
   </Provider>, document.getElementById('root'));
 
