@@ -6,6 +6,7 @@ import { bindActionCreators } from "redux";
 import * as uuid from 'uuid';
 import { getTodaysDate } from '../Utils/CommonMethods';
 import * as actions from '../actions/ticketActions';
+import ErrorBlock from './ErrorBlock';
 
 const mapStateToProps = state => {
     return {
@@ -29,7 +30,8 @@ class AddTicket extends Component {
             issueDate: "",
             empNameError: "",
             empEmailError: "",
-            empPhoneError: ""
+            empPhoneError: "",
+            issueDateError: ""
         }
     };
 
@@ -67,7 +69,6 @@ class AddTicket extends Component {
             isCompleted: false,
             isDeleted: false
         };
-        debugger;
         return ticketObject;
     };
 
@@ -87,6 +88,7 @@ class AddTicket extends Component {
                             value={this.state.empName}
                             onChange={this.onTextChange}
                         />
+                        <ErrorBlock errorMessage={this.state.empNameError} />
 
                         <label htmlFor="empEmail">Email</label>
                         <input
@@ -97,6 +99,7 @@ class AddTicket extends Component {
                             value={this.state.empEmail}
                             onChange={this.onTextChange}
                         />
+                        <ErrorBlock errorMessage={this.state.empEmailError} />
 
                         <label htmlFor="empPhone">Phone (Mobile)</label>
                         <input
@@ -108,6 +111,7 @@ class AddTicket extends Component {
                             value={this.state.empPhone}
                             onChange={this.onTextChange}
                         />
+                        <ErrorBlock errorMessage={this.state.empPhoneError} />
 
                         <label htmlFor="issueType">Issue</label>
                         <select
@@ -143,6 +147,7 @@ class AddTicket extends Component {
                             value={this.state.issueDate}
                             onChange={this.onTextChange}
                         />
+                        <ErrorBlock errorMessage={this.state.issueDateError} />
                     
                         <input
                             type="submit"

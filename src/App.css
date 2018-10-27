@@ -114,3 +114,14 @@ td, th {
 tr:nth-child(even) {
   background-color: #dddddd;
 }
+
+.InputError {
+  float: left;
+  color: red;
+  font-size: calc(2px + 2vmin);
+  padding: 5px;
+}
+
+.clear {
+  clear: both;
+}

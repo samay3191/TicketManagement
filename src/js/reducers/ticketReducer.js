@@ -3,7 +3,8 @@ import * as _ from 'lodash';
 
 const initialState = {
     tickets: [],
-    selectedTicket: null
+    selectedTicket: null,
+    assignmentError: ""
 };
 
 const ticketReducer = (state = initialState, action) => {
@@ -19,15 +20,11 @@ const ticketReducer = (state = initialState, action) => {
         }
         case UPDATE_TICKET:
         {
+            const newState = { ...state };
             const updatedTicket = action.payload;
-            const tickets = state.tickets.map(ticket => {
-                if (ticket.ticketId === updatedTicket.ticketId) {
-                    return updatedTicket;
-                }
-                return ticket;
-            });
+            const tickets = updateObjectInArray(newState.tickets, updatedTicket);
             return {
-                ...state,
+                ...newState,
                 tickets
             };
         }
@@ -45,5 +42,17 @@ const ticketReducer = (state = initialState, action) => {
             return state;
     }
 };
+
+function updateObjectInArray(tickets, updatedTicket) {
+    return tickets.map((ticket) => {
+      if (ticket.ticketId !== updatedTicket.ticketId) {
+        return {...ticket};
+      }
+      return {
+        ...ticket,
+        ...updatedTicket
+      }
+    });
+  }
 
 export default ticketReducer;
