@@ -4,12 +4,12 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import PropTypes from 'prop-types';
 import { hashHistory } from 'react-router';
-import * as actions from './js/actions/ticketActions';
+import * as actions from './js/actions/navigationActions';
+import Home from './js/components/Home';
 
 const mapStateToProps = state => {
   return {
-    tickets: state.ticketReducer.tickets,
-    selectedTicket: state.ticketReducer.selectedTicket
+    activePage: state.navigationReducer.activePage
   };
 };
 
@@ -17,29 +17,47 @@ const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
 
 class App extends Component {
 
-  constructor() {
-    super();
-  }
-
   goToPage = (path) => {
     hashHistory.push(path);
+  };
+
+  setActiveClass = (page) => {
+    return this.props.activePage === page ? "active" : "";
   };
 
   render() {
     return (
       <div className="App">
         <header className="App-header">
-          <div className="AppBar">
-            <h3>React Demo</h3>
+          <div
+            className="AppBar"
+            onClick={() => this.goToPage("/")}
+          >
+            <h2>Ticket Management Demo</h2>
           </div>
           <div className="NavigationBar">
             <ul>
-              <li onClick={() => this.goToPage("/AddTicket")}>Add Ticket</li>
-              <li onClick={() => this.goToPage("/TicketList")}>Ticket List</li>
-              <li onClick={() => this.goToPage("/AssignTicket")}>Assign Ticket</li>
+              <li
+                className={this.setActiveClass("AddTicket")}
+                onClick={() => this.goToPage("/AddTicket")}
+              >
+                Add Ticket
+              </li>
+              <li
+                className={this.setActiveClass("TicketList")}
+                onClick={() => this.goToPage("/TicketList")}
+              >
+                Ticket List
+              </li>
+              <li
+                className={this.setActiveClass("AssignTicket")}
+                onClick={() => this.goToPage("/AssignTicket")}
+              >
+                Assign Ticket
+              </li>
             </ul>
           </div>
-          {this.props.children}
+          {this.props.children || <Home /> }
         </header>
       </div>
     );
@@ -47,8 +65,7 @@ class App extends Component {
 }
 
 App.propTypes = {
-  tickets: PropTypes.array,
-  selectedTicket: PropTypes.node
+  activePage: PropTypes.string
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

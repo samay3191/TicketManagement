@@ -16,6 +16,7 @@ ReactDOM.render(<Provider store={store}>
         <Route path="AddTicket" component={AddTicket}/>
         <Route path="TicketList" component={TicketList}/>
         <Route path="AssignTicket" component={AssignTicket}/>
+        <Route path="AssignTicket/:SelectedTicketId" component={AssignTicket}/>
       </Route>
     </Router>
   </Provider>, document.getElementById('root'));

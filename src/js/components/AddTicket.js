@@ -5,17 +5,17 @@ import { hashHistory } from 'react-router';
 import { bindActionCreators } from "redux";
 import * as uuid from 'uuid';
 import { getTodaysDate } from '../Utils/CommonMethods';
-import * as actions from '../actions/ticketActions';
+import rootActions from '../actions/index';
 import ErrorBlock from './ErrorBlock';
 
 const mapStateToProps = state => {
     return {
-      tickets: state.ticketReducer.tickets,
-      selectedTicket: state.ticketReducer.selectedTicket
+        tickets: state.ticketReducer.tickets,
+        selectedTicket: state.ticketReducer.selectedTicket
     };
 };
-  
-const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
+
+const mapDispatchToProps = dispatch => bindActionCreators(rootActions, dispatch);
 
 class AddTicket extends Component {
 
@@ -27,7 +27,7 @@ class AddTicket extends Component {
             empPhone: "",
             issueType: "Software Installation",
             issueDescription: "",
-            issueDate: "",
+            issueDate: getTodaysDate(),
             empNameError: "",
             empEmailError: "",
             empPhoneError: "",
@@ -35,15 +35,35 @@ class AddTicket extends Component {
         }
     };
 
+    componentWillMount() {
+        this.props.setNavigation("AddTicket");
+    }
+
     onTextChange = event => {
-        this.setState({ [event.target.name] : event.target.value });
+        this.setState({ [event.target.name]: event.target.value });
+    };
+
+    checkValidity = (form) => {
+        let isValid = true;
+        const count = form.length;
+        for (let i = 0; i < count; i++) {
+            if (!form[i].validity.valid) {
+                isValid = false;
+                this.setState({ [form[i].name + "Error"]: "Please provide valid information" });
+            } else {
+                this.setState({ [form[i].name + "Error"]: "" });
+            }
+        }
+        return isValid;
     };
 
     submitTicket = async (event) => {
         event.preventDefault();
-        const ticket = this.createTicketObject();
-        await this.props.addTicket(ticket);
-        hashHistory.push("/TicketList");
+        if (this.checkValidity(event.target)) {
+            const ticket = this.createTicketObject();
+            await this.props.addTicket(ticket);
+            hashHistory.push("/TicketList");
+        }
     };
 
     createTicketObject = () => {
@@ -87,6 +107,7 @@ class AddTicket extends Component {
                             patter="[A-Za-z]"
                             value={this.state.empName}
                             onChange={this.onTextChange}
+                            required
                         />
                         <ErrorBlock errorMessage={this.state.empNameError} />
 
@@ -98,6 +119,7 @@ class AddTicket extends Component {
                             placeholder="Enter email id"
                             value={this.state.empEmail}
                             onChange={this.onTextChange}
+                            required
                         />
                         <ErrorBlock errorMessage={this.state.empEmailError} />
 
@@ -110,6 +132,7 @@ class AddTicket extends Component {
                             pattern="[0-9]{10}"
                             value={this.state.empPhone}
                             onChange={this.onTextChange}
+                            required
                         />
                         <ErrorBlock errorMessage={this.state.empPhoneError} />
 
@@ -119,6 +142,7 @@ class AddTicket extends Component {
                             name="issueType"
                             value={this.state.issueType}
                             onChange={this.onTextChange}
+                            required
                         >
                             <option value="Software Installation">Software Installation</option>
                             <option value="URL Access Required">URL Access Required</option>
@@ -136,6 +160,7 @@ class AddTicket extends Component {
                             placeholder="Describe your issue here.."
                             value={this.state.issueDescription}
                             onChange={this.onTextChange}
+                            required
                         />
 
                         <label htmlFor="issueDate">Issue Date</label>
@@ -146,9 +171,10 @@ class AddTicket extends Component {
                             min={getTodaysDate()}
                             value={this.state.issueDate}
                             onChange={this.onTextChange}
+                            required
                         />
                         <ErrorBlock errorMessage={this.state.issueDateError} />
-                    
+
                         <input
                             type="submit"
                             value="Submit"
@@ -164,5 +190,5 @@ AddTicket.propTypes = {
     tickets: PropTypes.array,
     selectedTicket: PropTypes.node
 }
-  
+
 export default connect(mapStateToProps, mapDispatchToProps)(AddTicket);

@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import * as actions from '../actions/ticketActions';
+import { Link } from 'react-router';
+import rootActions from '../actions/index';
 
 const mapStateToProps = state => {
     return {
@@ -11,9 +12,14 @@ const mapStateToProps = state => {
     };
 };
   
-const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators(rootActions, dispatch);
 
 class TicketList extends Component {
+
+    componentWillMount() {
+        this.props.setNavigation("TicketList");
+    }
+
     getTicketStatus = ticket => {
         const ticketStatus =
             ticket.isCompleted ? "Resolved" :
@@ -24,7 +30,7 @@ class TicketList extends Component {
 
     render() {
         return (
-            <div style={{ width: "50%" }}>
+            <div className="TicketList">
                 <div><h3>Logged Tickets</h3></div>
                 <div>
                     <table>
@@ -35,6 +41,7 @@ class TicketList extends Component {
                                 <th>Issue</th>
                                 <th>Logged On</th>
                                 <th>Status</th>
+                                <th>Assign</th>
                             </tr>
                         </thead>
                         { this.props.tickets && this.props.tickets.length > 0 ?
@@ -44,11 +51,19 @@ class TicketList extends Component {
                                     <td>{ticket.empEmail}</td>
                                     <td>{ticket.issueType}</td>
                                     <td>{ticket.issueDate}</td>
-                                    <td>{this.getTicketStatus(ticket)}</td>                                    
+                                    <td>{this.getTicketStatus(ticket)}</td>
+                                    <td>
+                                        { ticket.assignedTo ? 
+                                            "Already Assigned" :
+                                            <Link to={`/AssignTicket/${ticket.ticketId}`}>Assign</Link>
+                                        }
+                                    </td>
                                 </tr>
                             ))
                             :
-                            <p>No tickets Found</p>
+                            <tbody>
+                                <tr><td colSpan="6">No tickets Found</td></tr>
+                            </tbody>
                         }
                     </table>
                 </div>

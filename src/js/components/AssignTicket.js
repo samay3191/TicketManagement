@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from "react-redux";
 import { hashHistory } from 'react-router';
 import { bindActionCreators } from "redux";
-import * as actions from '../actions/ticketActions';
+import rootActions from '../actions/index';
 import ErrorBlock from './ErrorBlock';
 import * as _ from 'lodash';
 
@@ -15,7 +15,7 @@ const mapStateToProps = state => {
     };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators(rootActions, dispatch);
 
 class AssignTicket extends Component {
 
@@ -24,7 +24,7 @@ class AssignTicket extends Component {
         this.state = {
             pendingTicket: "",
             assignTo: "Support1",
-            assignOn: "",
+            assignOn: getTodaysDate(),
             pendingTicketError: "",
             assignToError: "",
             assignOnError: "",
@@ -33,12 +33,17 @@ class AssignTicket extends Component {
 
     componentWillMount() {
         this.props.getAllTickets();
+        this.props.setNavigation("AssignTicket");
     }
 
     componentDidMount() {
         const allPendingTickets = this.getPendingTickets();
         if (allPendingTickets && allPendingTickets.length > 0) {
-            this.setState({ pendingTicket: allPendingTickets[0].ticketId });
+            debugger;
+            const ticketId = this.props.params ?
+            this.props.params.SelectedTicketId :
+            allPendingTickets[0].ticketId;
+            this.setState({ pendingTicket: ticketId });
         }
     }
 
@@ -55,7 +60,7 @@ class AssignTicket extends Component {
             assignedTo: this.state.assignTo,
             assignedOn: this.state.assignOn
         });
-        if (filterdTickets && filterdTickets.length > 2) {
+        if (filterdTickets && filterdTickets.length > 3) {
             const error = `${this.state.assignTo} is loaded on ${this.state.assignOn}. Please select different support person or date.`;
             this.setState({ assignToError: error });
             return false;
@@ -63,10 +68,24 @@ class AssignTicket extends Component {
         return true;
     };
 
+    checkValidity = (form) => {
+        let isValid = true;
+        const count = form.length;
+        for (let i=0; i < count; i++) {
+            if (!form[i].validity.valid) {
+                isValid = false;
+                this.setState({ [form[i].name+"Error"]: "Please provide valid information" });
+            } else {
+                this.setState({ [form[i].name+"Error"]: "" });
+            }
+        }
+        return isValid;
+    };
+
     assignTicket = (event) => {
         event.preventDefault();
         const allTickets = this.props.tickets;
-        if (this.verifyForOverloadedSupport(allTickets)) {
+        if (this.checkValidity(event.target) && this.verifyForOverloadedSupport(allTickets)) {
             const pendingTicket = this.state.pendingTicket;
             const ticket = _.find(allTickets, { ticketId: pendingTicket });
             const updatedTicket = _.assign({}, ticket, {
@@ -91,10 +110,15 @@ class AssignTicket extends Component {
                             name="pendingTicket"
                             value={this.state.pendingTicket}
                             onChange={this.onTextChange}
+                            required
                         >
                             {pendingTickets.length > 0 ?
                                 pendingTickets.map(ticket => {
-                                    return <option value={ticket.ticketId}>{`${ticket.empName} - ${ticket.issueType}`}</option>
+                                    return <option
+                                    key={ticket.ticketId}
+                                    value={ticket.ticketId}>
+                                        {`${ticket.empName} - ${ticket.issueType}`}
+                                    </option>
                                 })
                                 :
                                 <option value="" disabled={true}>No Tickets Available</option>
@@ -108,6 +132,7 @@ class AssignTicket extends Component {
                             name="assignTo"
                             value={this.state.assignTo}
                             onChange={this.onTextChange}
+                            required
                         >
                             <option value="Support1">Support 1</option>
                             <option value="Support2">Support 2</option>
@@ -123,10 +148,15 @@ class AssignTicket extends Component {
                             min={getTodaysDate()}
                             value={this.state.assignOn}
                             onChange={this.onTextChange}
+                            required
                         />
                         <ErrorBlock errorMessage={this.state.assignOnError} />
 
-                        <input type="submit" value="Submit" />
+                        <input
+                            type="submit"
+                            value="Submit"
+                            disabled={pendingTickets.length === 0}
+                        />
                     </form>
                 </div>
             </div>

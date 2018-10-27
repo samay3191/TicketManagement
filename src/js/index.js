@@ -1,5 +1,5 @@
 import store from "./store/index";
-import { filterCountries } from "./actions/ticketActions";
+import rootActions from "./actions/index";
 
 window.store = store;
-window.filterCountries = filterCountries;
+window.rootActions = rootActions;
